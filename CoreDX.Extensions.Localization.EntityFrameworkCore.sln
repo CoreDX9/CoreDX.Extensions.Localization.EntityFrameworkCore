@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CB3DA3D1-C33D-42D2-B8F3-3454099A95FE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreDX.Extensions.Localization.EntityFrameworkCore.Abstractions", "src\CoreDX.Extensions.Localization.EntityFrameworkCore.Abstractions\CoreDX.Extensions.Localization.EntityFrameworkCore.Abstractions.csproj", "{FD777CF0-0D90-495C-8014-2AD3DC4ED3D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreDX.Extensions.Localization.EntityFrameworkCore.Models", "src\CoreDX.Extensions.Localization.EntityFrameworkCore.Models\CoreDX.Extensions.Localization.EntityFrameworkCore.Models.csproj", "{D8AC5CDE-5EE8-4799-9630-EA8B14E44899}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreDX.Extensions.Localization.EntityFrameworkCore", "src\CoreDX.Extensions.Localization.EntityFrameworkCore\CoreDX.Extensions.Localization.EntityFrameworkCore.csproj", "{8C8CCA81-7491-4DAE-8624-B4D2EA662356}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution-items", "solution-items", "{4676C19B-001C-4895-9AB9-20A972AD21A6}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		exclusion.dic = exclusion.dic
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD777CF0-0D90-495C-8014-2AD3DC4ED3D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD777CF0-0D90-495C-8014-2AD3DC4ED3D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD777CF0-0D90-495C-8014-2AD3DC4ED3D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD777CF0-0D90-495C-8014-2AD3DC4ED3D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8AC5CDE-5EE8-4799-9630-EA8B14E44899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8AC5CDE-5EE8-4799-9630-EA8B14E44899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8AC5CDE-5EE8-4799-9630-EA8B14E44899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8AC5CDE-5EE8-4799-9630-EA8B14E44899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C8CCA81-7491-4DAE-8624-B4D2EA662356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C8CCA81-7491-4DAE-8624-B4D2EA662356}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C8CCA81-7491-4DAE-8624-B4D2EA662356}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C8CCA81-7491-4DAE-8624-B4D2EA662356}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FD777CF0-0D90-495C-8014-2AD3DC4ED3D4} = {CB3DA3D1-C33D-42D2-B8F3-3454099A95FE}
+		{D8AC5CDE-5EE8-4799-9630-EA8B14E44899} = {CB3DA3D1-C33D-42D2-B8F3-3454099A95FE}
+		{8C8CCA81-7491-4DAE-8624-B4D2EA662356} = {CB3DA3D1-C33D-42D2-B8F3-3454099A95FE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {003BF5EA-7557-4320-932A-3A73ACB05BC1}
+	EndGlobalSection
+EndGlobal
