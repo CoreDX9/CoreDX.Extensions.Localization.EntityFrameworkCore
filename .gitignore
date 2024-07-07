@@ -363,6 +363,3 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Custom ignore
-/src/Apps/Server/SoftDeleteDemo.Web/wwwroot/lib
-/src/Apps/Server/SoftDeleteDemo.Web/wwwroot/user_upload_files
-/src/Apps/Server/SoftDeleteDemo.Web/SoftDeleteDemo.License.json
