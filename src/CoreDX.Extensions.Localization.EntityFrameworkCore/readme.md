@@ -36,6 +36,9 @@ ServiceCollection services = new ();
 // We use IDbContextFactoty to access database.
 services.AddDbContextFactoty<YourDbContext>(options => options.UseSqlite("Localization.db"));
 
+// If you use on .NETStandard 2.0 or 2.1.
+services.AddDbContext<YourDbContext>(options => options.UseSqlite("Localization.db"));
+
 // Add services to ServiceCollection with default entity type.
 services.AddEntityFrameworkCoreLocalization<YourDbContext>(options =>
 {
