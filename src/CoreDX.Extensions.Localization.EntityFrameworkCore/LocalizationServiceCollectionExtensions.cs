@@ -20,7 +20,7 @@ public static class LocalizationServiceCollectionExtensions
         where TDbContext : DbContext
         where TLocalizationRecord : LocalizationRecord, new()
     {
-        ArgumentNullException.ThrowIfNull(services);
+        if (services is null) throw new ArgumentNullException(nameof(services));
 
         services.AddOptions();
 
@@ -45,8 +45,8 @@ public static class LocalizationServiceCollectionExtensions
         where TDbContext : DbContext
         where TLocalizationRecord : LocalizationRecord, new()
     {
-        ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(setupAction);
+        if (services is null) throw new ArgumentNullException(nameof(services));
+        if (setupAction is null) throw new ArgumentNullException(nameof(setupAction));
 
         services.AddOptions();
 

@@ -2,10 +2,16 @@
 
 namespace CoreDX.Extensions.Localization.EntityFrameworkCore;
 
+/// <summary>
+/// A provider to get resource strings using EntityFrameworkCore.
+/// </summary>
+/// <param name="resourceNamesCache">The cache.</param>
+/// <param name="resourceManager">The manager.</param>
 public class EntityFrameworkCoreResourceStringProvider(
     IResourceNamesCache resourceNamesCache,
     EntityFrameworkCoreResourceManager resourceManager) : IResourceStringProvider
 {
+    /// <inheritdoc />
     public IList<string>? GetAllResourceStrings(CultureInfo culture, bool throwOnMissing)
     {
         var cacheKey = GetResourceCacheKey(culture);

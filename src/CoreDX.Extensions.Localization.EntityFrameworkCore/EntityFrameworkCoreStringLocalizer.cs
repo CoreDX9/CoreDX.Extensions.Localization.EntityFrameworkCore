@@ -2,6 +2,9 @@
 
 namespace CoreDX.Extensions.Localization.EntityFrameworkCore;
 
+/// <summary>
+/// An <see cref="IStringLocalizer" /> that uses the <see cref="EntityFrameworkCoreResourceManager" /> to provide localized strings.
+/// </summary>
 public partial class EntityFrameworkCoreStringLocalizer(
     EntityFrameworkCoreResourceManager resourceManager,
     IResourceStringProvider resourceStringProvider,
@@ -14,6 +17,12 @@ public partial class EntityFrameworkCoreStringLocalizer(
     private readonly IResourceStringProvider _resourceStringProvider = resourceStringProvider ?? throw new ArgumentNullException(nameof(resourceStringProvider));
     private const string _searchedLocation = "";
 
+    /// <summary>
+    /// Create an instance of <see cref="EntityFrameworkCoreStringLocalizer"/>.
+    /// </summary>
+    /// <param name="resourceManager">The manager.</param>
+    /// <param name="resourceNamesCache">The cache.</param>
+    /// <param name="logger">The logger.</param>
     public EntityFrameworkCoreStringLocalizer(
         EntityFrameworkCoreResourceManager resourceManager,
         IResourceNamesCache resourceNamesCache,
@@ -26,13 +35,15 @@ public partial class EntityFrameworkCoreStringLocalizer(
         
     }
 
+    /// <inheritdoc />
     public string ResourceName => resourceManager.ResourceName;
 
+    /// <inheritdoc />
     public LocalizedString this[string name]
     {
         get
         {
-            ArgumentNullException.ThrowIfNull(name);
+            if (name is null) throw new ArgumentNullException(nameof(name));
 
             var value = GetStringSafely(name, null);
 
@@ -40,11 +51,12 @@ public partial class EntityFrameworkCoreStringLocalizer(
         }
     }
 
+    /// <inheritdoc />
     public LocalizedString this[string name, params object[] arguments]
     {
         get
         {
-            ArgumentNullException.ThrowIfNull(name);
+            if (name is null) throw new ArgumentNullException(nameof(name));
 
             var format = GetStringSafely(name, null);
             var value = string.Format(format ?? name, arguments);
@@ -53,19 +65,28 @@ public partial class EntityFrameworkCoreStringLocalizer(
         }
     }
 
+    /// <inheritdoc />
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) =>
         GetAllStrings(includeParentCultures, CultureInfo.CurrentUICulture);
 
+    /// <inheritdoc />
     public void ClearResourceCache(CultureInfo culture)
     {
-        ArgumentNullException.ThrowIfNull(culture);
+        if (culture is null) throw new ArgumentNullException(nameof(culture));
 
         resourceManager.ClearResourceCache(culture);
     }
 
+    /// <summary>
+    /// Get all strings with culture.
+    /// </summary>
+    /// <param name="includeParentCultures">Include parent cultures or not.</param>
+    /// <param name="culture">The culture.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     protected virtual IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures, CultureInfo culture)
     {
-        ArgumentNullException.ThrowIfNull(culture);
+        if (culture is null) throw new ArgumentNullException(nameof(culture));
 
         var resourceNames = includeParentCultures
             ? GetResourceNamesFromCultureHierarchy(culture).AsEnumerable()
@@ -78,9 +99,16 @@ public partial class EntityFrameworkCoreStringLocalizer(
         }
     }
 
+    /// <summary>
+    /// Gets a resource string from the <see cref="EntityFrameworkCoreStringLocalizer._resourceManager" /> and returns <c>null</c> instead of
+    /// throwing exceptions if a match isn't found.
+    /// </summary>
+    /// <param name="name">The name of the string resource.</param>
+    /// <param name="culture">The <see cref="T:System.Globalization.CultureInfo" /> to get the string for.</param>
+    /// <returns>The resource string, or <c>null</c> if none was found.</returns>
     protected string? GetStringSafely(string name, CultureInfo? culture)
     {
-        ArgumentNullException.ThrowIfNull(name);
+        if (name is null) throw new ArgumentNullException(nameof(name));
 
         var keyCulture = culture ?? CultureInfo.CurrentUICulture;
         var cacheKey = $"name={name}&culture={keyCulture.Name}";
@@ -127,9 +155,29 @@ public partial class EntityFrameworkCoreStringLocalizer(
         return resourceNames;
     }
 
+#if NET5_0_OR_GREATER
+#else
+    /// <inheritdoc />
+    public IStringLocalizer WithCulture(CultureInfo culture)
+    {
+        return this;
+    }
+#endif
     private static partial class Log
     {
+
+#if NET6_0_OR_GREATER
         [LoggerMessage(1, LogLevel.Debug, $"{nameof(EntityFrameworkCoreStringLocalizer)} searched for '{{Key}}' in '{{LocationSearched}}' with culture '{{Culture}}'.", EventName = "SearchedLocation")]
         public static partial void SearchedLocation(ILogger logger, string key, string locationSearched, CultureInfo culture);
+#else
+        public static void SearchedLocation(ILogger logger, string key, string locationSearched, CultureInfo culture)
+        {
+            logger.LogDebug(
+                eventId: new(1, "SearchedLocation"),
+                $"{nameof(EntityFrameworkCoreStringLocalizer)} searched for '{{Key}}' in '{{LocationSearched}}' with culture '{{Culture}}'.", key,
+                locationSearched,
+                culture);
+        }
+#endif
     }
 }

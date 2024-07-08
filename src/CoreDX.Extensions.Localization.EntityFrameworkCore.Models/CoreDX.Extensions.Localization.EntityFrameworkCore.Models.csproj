@@ -3,10 +3,10 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.0.1</PackageVersion>
     <PackageTags>Localization EntityFrameworkCore</PackageTags>
     <Description>Application localization's entity model and default configuration for EntityFrameworkCore to manage localized assembly resources.</Description>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>Add .NETStandard 2.0 and 2.1, .NET 5.0 support.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

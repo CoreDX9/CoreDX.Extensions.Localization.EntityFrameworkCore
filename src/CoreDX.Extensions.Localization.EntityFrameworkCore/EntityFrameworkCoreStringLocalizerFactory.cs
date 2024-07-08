@@ -1,4 +1,9 @@
 ﻿using CoreDX.Extensions.Localization.EntityFrameworkCore.Models;
+#if NET5_0_OR_GREATER
+
+#else
+using Microsoft.Extensions.DependencyInjection;
+#endif
 using Microsoft.Extensions.Options;
 using System.Reflection;
 
@@ -14,9 +19,16 @@ public class EntityFrameworkCoreStringLocalizerFactory<TDbContext, TLocalization
     private readonly IResourceNamesCache _resourceNamesCache = new ResourceNamesCache();
     private readonly ConcurrentDictionary<string, IDynamicResourceStringLocalizer> _localizerCache = new();
     private readonly IOptionsMonitor<EntityFrameworkCoreLocalizationOptions> _localizationOptions;
+#if NET5_0_OR_GREATER
     private readonly IDbContextFactory<TDbContext> _dbContextFactory;
+#else
+    private readonly IServiceProvider _serviceProvider;
+#endif
+
     private readonly ILoggerFactory _loggerFactory;
 
+
+#if NET5_0_OR_GREATER
     /// <summary>
     /// Creates a new <see cref="EntityFrameworkCoreStringLocalizerFactory{TDbContext, TLocalizationRecord}"/>.
     /// </summary>
@@ -24,16 +36,30 @@ public class EntityFrameworkCoreStringLocalizerFactory<TDbContext, TLocalization
     /// <param name="dbContextFactory">The <see cref="IDbContextFactory{TContext}"/>.</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
     public EntityFrameworkCoreStringLocalizerFactory(
+#else
+    /// <summary>
+    /// Creates a new <see cref="EntityFrameworkCoreStringLocalizerFactory{TDbContext, TLocalizationRecord}"/>.
+    /// </summary>
+    /// <param name="localizationOptions">The <see cref="IOptionsMonitor{LocalizationOptions}"/>.</param>
+    /// <param name="serviceProvider">The <see cref="IServiceProvider"/>.</param>
+    /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
+    public EntityFrameworkCoreStringLocalizerFactory(
+#endif
         IOptionsMonitor<EntityFrameworkCoreLocalizationOptions> localizationOptions,
+#if NET5_0_OR_GREATER
         IDbContextFactory<TDbContext> dbContextFactory,
+#else
+        IServiceProvider serviceProvider,
+#endif
         ILoggerFactory loggerFactory)
     {
-        ArgumentNullException.ThrowIfNull(localizationOptions);
-        ArgumentNullException.ThrowIfNull(loggerFactory);
-
-        _localizationOptions = localizationOptions;
-        _dbContextFactory = dbContextFactory;
-        _loggerFactory = loggerFactory;
+        _localizationOptions = localizationOptions ?? throw new ArgumentNullException(nameof(localizationOptions));
+#if NET5_0_OR_GREATER
+        _dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
+#else
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+#endif
+        _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
     }
 
     /// <summary>
@@ -80,9 +106,6 @@ public class EntityFrameworkCoreStringLocalizerFactory<TDbContext, TLocalization
         {
             throw new ArgumentException($@"""{nameof(location)}"" can not be null or empty.", nameof(location));
         }
-
-        ArgumentNullException.ThrowIfNull(baseName);
-        ArgumentNullException.ThrowIfNull(location);
 
         return _localizerCache.GetOrAdd(GetNameBasedLocalizerCacheKey(baseName, location), _ =>
         {
@@ -169,7 +192,14 @@ public class EntityFrameworkCoreStringLocalizerFactory<TDbContext, TLocalization
         string baseName)
     {
         return new EntityFrameworkCoreStringLocalizer(
-            new EntityFrameworkCoreResourceManager<TDbContext, TLocalizationRecord>(_dbContextFactory, _localizationOptions, baseName),
+            new EntityFrameworkCoreResourceManager<TDbContext, TLocalizationRecord>(
+#if NET5_0_OR_GREATER
+                _dbContextFactory,
+#else
+                _serviceProvider,
+#endif
+                _localizationOptions,
+                baseName),
             _resourceNamesCache,
             _loggerFactory.CreateLogger<EntityFrameworkCoreStringLocalizer>());
     }
@@ -181,9 +211,19 @@ public class EntityFrameworkCoreStringLocalizerFactory<TDbContext, TLocalization
     /// <returns>The prefix for resource lookup.</returns>
     protected virtual string GetResourcePrefix(TypeInfo typeInfo)
     {
-        ArgumentNullException.ThrowIfNull(typeInfo);
+        if (typeInfo is null)
+        {
+            throw new ArgumentNullException(nameof(typeInfo));
+        }
 
-        return GetResourcePrefix(typeInfo, GetRootNamespace(typeInfo.Assembly), GetResourcePath(typeInfo.Assembly));
+        return GetResourcePrefix(
+            typeInfo,
+#if NETSTANDARD2_0
+            new AssemblyName(typeInfo.Assembly.FullName).Name,   
+#else
+            GetRootNamespace(typeInfo.Assembly),
+#endif
+            GetResourcePath(typeInfo.Assembly));
     }
 
     /// <summary>
@@ -246,15 +286,21 @@ public class EntityFrameworkCoreStringLocalizerFactory<TDbContext, TLocalization
 
         var assemblyName = new AssemblyName(baseNamespace);
         var assembly = Assembly.Load(assemblyName);
+#if NETSTANDARD2_0
+        string resourcePath = GetResourcePath(assembly);
+        baseResourceName = string.Concat(baseNamespace + "." + resourcePath, TrimPrefix(baseResourceName, baseNamespace + "."));
+#else
         var rootNamespace = GetRootNamespace(assembly);
         var resourceLocation = GetResourcePath(assembly);
         var locationPath = rootNamespace + "." + resourceLocation;
-
         baseResourceName = locationPath + "." + TrimPrefix(baseResourceName, baseNamespace + ".");
+#endif
 
         return baseResourceName;
     }
 
+#if NETSTANDARD2_0
+#else
     /// <summary>Gets a <see cref="RootNamespaceAttribute"/> from the provided <see cref="Assembly"/>.</summary>
     /// <param name="assembly">The assembly to get a <see cref="RootNamespaceAttribute"/> from.</param>
     /// <returns>The <see cref="RootNamespaceAttribute"/> associated with the given <see cref="Assembly"/>.</returns>
@@ -263,6 +309,7 @@ public class EntityFrameworkCoreStringLocalizerFactory<TDbContext, TLocalization
     {
         return assembly.GetCustomAttribute<RootNamespaceAttribute>();
     }
+#endif
 
     /// <summary>Gets a <see cref="ResourceLocationAttribute"/> from the provided <see cref="Assembly"/>.</summary>
     /// <param name="assembly">The assembly to get a <see cref="ResourceLocationAttribute"/> from.</param>
@@ -288,6 +335,8 @@ public class EntityFrameworkCoreStringLocalizerFactory<TDbContext, TLocalization
         return resourceLocation;
     }
 
+#if NETSTANDARD2_0
+#else
     private string? GetRootNamespace(Assembly assembly)
     {
         var rootNamespaceAttribute = GetRootNamespaceAttribute(assembly);
@@ -299,6 +348,7 @@ public class EntityFrameworkCoreStringLocalizerFactory<TDbContext, TLocalization
 
         return assembly.GetName().Name;
     }
+#endif
 
     private static string? TrimPrefix(string name, string prefix)
     {
