@@ -55,3 +55,5 @@ services.AddEntityFrameworkCoreLocalization<YourDbContext, YourLocalizationRecor
 ```
 
 Then use `IStringLocalizer<T>` to localize your content. If `CreateLocalizationResourcesIfNotExist` is `true`, record will insert into data table auto if is first access.
+
+If you want to clear resource cache, you can use service of type `IDynamicResourceStringLocalizerFactory`.
