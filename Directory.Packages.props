@@ -32,4 +32,9 @@
     <PackageVersion Include="Microsoft.Extensions.Localization" Version="[8.0.0,)" />
     <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="[8.0.0,)" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="[9.0.0,)" />
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="[9.0.0,)" />
+    <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="[9.0.0,)" />
+  </ItemGroup>
 </Project>

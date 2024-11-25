@@ -27,6 +27,12 @@ public class YourDbContext : DbContext
     }
 }
 
+// Or custom key type
+public class LocalizationRecordOfIntKey : LocalizationRecord<int>
+{
+    public int YourProperty { get; set; }
+}
+
 ```
 
 ### ServiceCollection

@@ -35,28 +35,22 @@ public abstract class EntityFrameworkCoreResourceManager(string resourceName)
     internal abstract ConcurrentDictionary<string, string?>? GetResourceSet(CultureInfo culture, bool tryParents);
 }
 
-#if NET5_0_OR_GREATER
+#pragma warning disable // XML 注释中有“serviceProvider”的 param 标记，但是没有该名称的参数
 /// <inheritdoc />
 /// <typeparam name="TDbContext">The type of <see cref="DbContext"/> to manage resources.</typeparam>
 /// <typeparam name="TLocalizationRecord">The type of localization record entity.</typeparam>
 /// <param name="dbContextFactory">The factory.</param>
-/// <param name="options">The options.</param>
-/// <param name="resourceName">The resource name.</param>
-public class EntityFrameworkCoreResourceManager<TDbContext, TLocalizationRecord>(
-    IDbContextFactory<TDbContext> dbContextFactory,
-#else
-/// <inheritdoc />
-/// <typeparam name="TDbContext">The type of <see cref="DbContext"/> to manage resources.</typeparam>
-/// <typeparam name="TLocalizationRecord">The type of localization record entity.</typeparam>
 /// <param name="serviceProvider">The service provider.</param>
 /// <param name="options">The options.</param>
 /// <param name="resourceName">The resource name.</param>
 public class EntityFrameworkCoreResourceManager<TDbContext, TLocalizationRecord>(
+#if NET5_0_OR_GREATER
+    IDbContextFactory<TDbContext> dbContextFactory,
+#else
     IServiceProvider serviceProvider,
 #endif
     IOptionsMonitor<EntityFrameworkCoreLocalizationOptions> options,
     string resourceName
-
 )
     : EntityFrameworkCoreResourceManager(resourceName)
     where TDbContext : DbContext
@@ -202,3 +196,4 @@ public class EntityFrameworkCoreResourceManager<TDbContext, TLocalizationRecord>
         return $"Culture={culture.Name};resourceName={ResourceName}";
     }
 }
+#pragma warning restore CS1572 // XML 注释中有“serviceProvider”的 param 标记，但是没有该名称的参数
