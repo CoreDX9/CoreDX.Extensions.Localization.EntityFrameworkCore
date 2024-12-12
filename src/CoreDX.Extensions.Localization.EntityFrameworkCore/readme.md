@@ -63,7 +63,7 @@ services.AddEntityFrameworkCoreLocalization<YourDbContext, YourLocalizationRecor
 // Then add MVC localization services.
 services
     .AddMvc()
-    .AddDataAnnotationsLocalization()
+    .AddDataAnnotationsLocalization();
 ```
 
 You should add EntityFrameworkCore localization services first before MVC services.
