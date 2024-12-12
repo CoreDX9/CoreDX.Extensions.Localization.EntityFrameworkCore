@@ -46,6 +46,7 @@ services.AddDbContextFactoty<YourDbContext>(options => options.UseSqlite("Locali
 services.AddDbContext<YourDbContext>(options => options.UseSqlite("Localization.db"));
 
 // Add services to ServiceCollection with default entity type.
+// If there are already any localization services in the service collection, no further services will be added.
 services.AddEntityFrameworkCoreLocalization<YourDbContext>(options =>
 {
     options.ResourcesPath = "Resources";
@@ -58,7 +59,14 @@ services.AddEntityFrameworkCoreLocalization<YourDbContext, YourLocalizationRecor
     options.ResourcesPath = "Resources";
     options.CreateLocalizationResourcesIfNotExist = true;
 });
+
+// Then add MVC localization services.
+services
+    .AddMvc()
+    .AddDataAnnotationsLocalization()
 ```
+
+You should add EntityFrameworkCore localization services first before MVC services.
 
 Then use `IStringLocalizer<T>` to localize your content. If `CreateLocalizationResourcesIfNotExist` is `true`, record will insert into data table auto if is first access.
 
